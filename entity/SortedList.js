@@ -8,6 +8,32 @@ class OrderedList {
     this.isAscending = isAscending;
   }
 
+  funcCheck(node1, node2, isAscending) {
+    if (isAscending) {
+      return this.isGreater(node1, node2);
+    } else {
+      return !this.isGreater(node1, node2);
+    }
+  }
+
+  checkPlaceAndInsert(node, newNode, isAscending) {
+    while (node !== null) {
+      if(node.next !== null && this.funcCheck(newNode, node, isAscending) && this.funcCheck(node.next, newNode, isAscending)) {
+        this.insertAfter(newNode, node.value);
+        break;
+      } else if (node.next === null && this.funcCheck(newNode, node, isAscending)) {
+        this.addInTail(newNode);
+        break;
+      } else if (node.prev === null && this.funcCheck(node, newNode, isAscending)) {
+        this.addInHead(newNode);
+        break;
+      }
+
+      node = node.next;
+    }
+
+  }
+
   isGreater(node1, node2) {
     return node1.value >= node2.value;
   }
@@ -22,34 +48,7 @@ class OrderedList {
 
       let node = this.head;
 
-      while (node !== null) {
-
-        if (this.isAscending) {
-          if(node.next !== null && this.isGreater(newNode, node) && this.isGreater(node.next, newNode)) {
-            this.insertAfter(newNode, node.value);
-            break;
-          } else if (node.next === null && this.isGreater(newNode, node)) {
-            this.addInTail(newNode);
-            break;
-          } else if (node.prev === null && this.isGreater(node, newNode)) {
-            this.addInHead(newNode);
-            break;
-          }
-        } else {
-          if(node.next !== null && !this.isGreater(newNode, node) && !this.isGreater(node.next, newNode)) {
-            this.insertAfter(newNode, node.value);
-            break;
-          } else if (node.next === null && !this.isGreater(newNode, node)) {
-            this.addInTail(newNode);
-            break;
-          } else if (node.prev === null && !this.isGreater(node, newNode)) {
-            this.addInHead(newNode);
-            break;
-          }
-        }
-
-        node = node.next;
-      }
+      this.checkPlaceAndInsert(node, newNode, this.isAscending);
 
     }
   }
